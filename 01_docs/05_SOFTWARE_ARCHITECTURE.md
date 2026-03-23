@@ -96,3 +96,25 @@ Example:
 | Screen 6 | Settings |
 
 Screen switching is controlled by rotary encoder.
+
+## 7. Software Module Structure
+
+The firmware is divided into the following modules:
+
+| Module | File | Role |
+|--------|------|------|
+| Main | checker_main.ino | Main loop control |
+| Config | config.h | System configuration |
+| Pins | pins.h | Pin assignment |
+| INA226 | ina226.cpp / ina226.h | Sensor control |
+| Display | display.cpp / display.h | TFT display control |
+| Logger | logger.cpp / logger.h | SD / Serial logging |
+| UI | ui.cpp / ui.h | Rotary encoder UI |
+| RTC | rtc.cpp / rtc.h | Time management |
+| Graph | graph.cpp / graph.h | Graph buffer |
+| Calc | calc.cpp / calc.h | Power/Energy calculation |
+
+### Main Program Policy
+The .ino file should contain only setup() and loop().
+
+All processing should be implemented in .cpp files.

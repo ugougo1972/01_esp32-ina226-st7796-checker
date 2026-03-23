@@ -251,3 +251,67 @@ ESP32 reads INA226 via I2C and performs:
 | USB power path | PENDING |
 | SD logging | PENDING |
 | System integration | PENDING |
+
+## Next Session Start Procedure
+
+### Current Repository Structure
+01_esp32-ina226-st7796-checker/
+├─ README.md
+├─ 01_docs/
+├─ 02_hardware/
+├─ 03_arduino/
+│   └─ checker_main/
+│       └─ checker_main.ino
+├─ 04_data/
+├─ 05_lib/
+└─ 06_tools/
+
+### Completed
+- GitHub Desktop environment initialized
+- Local repository created
+- Remote repository connected
+- Project folder structure created
+- Documentation files placed in 01_docs
+- Initial commit completed
+- Arduino project checker_main created
+
+### Next Tasks
+1. Normalize documentation structure
+2. Update documentation files
+3. Define software architecture
+4. Implement ESP32 serial output test
+5. Implement I2C scanner
+6. Start INA226 communication test
+
+### Git Commit Rules
+Commit message format:
+
+type: 内容
+
+Types:
+- init : 初期作成
+- docs : ドキュメント
+- code : コード
+- hw   : ハード
+- calc : 計算
+- test : テスト
+- fix  : 修正
+- refactor : 整理
+- arch : 設計変更
+
+## Development Phase Definition
+
+| Phase | Description |
+|------|-------------|
+| Phase 1 | ESP32 basic operation |
+| Phase 2 | INA226 measurement |
+| Phase 3 | TFT display |
+| Phase 4 | SD logging |
+| Phase 5 | RTC integration |
+| Phase 6 | UI implementation |
+| Phase 7 | Graph implementation |
+| Phase 8 | System integration |
+| Phase 9 | Accuracy verification |
+| Phase 10 | Final device build |
+
+Current phase: Phase 2 (INA226 measurement preparation)

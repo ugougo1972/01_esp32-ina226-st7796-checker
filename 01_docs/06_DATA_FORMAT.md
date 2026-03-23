@@ -1,4 +1,4 @@
-
+# 06_DATA_FORMAT.md
 # Data Format (INA226)
 
 ## INA226 Register Map

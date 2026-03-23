@@ -139,3 +139,37 @@ USB-C IN GND → USB-C OUT GND (Direct connection)
 - CC → Direct connection
 
 Only VBUS current is measured by INA226.
+
+## 8. Repository Structure
+
+01_esp32-ina226-st7796-checker/
+├─ README.md
+├─ 01_docs/
+├─ 02_hardware/
+├─ 03_arduino/
+│   └─ checker_main/
+│       ├─ checker_main.ino
+│       ├─ config.h
+│       ├─ pins.h
+│       ├─ ina226.cpp
+│       ├─ ina226.h
+│       ├─ display.cpp
+│       ├─ display.h
+│       ├─ logger.cpp
+│       ├─ logger.h
+│       └─ ui.cpp
+│
+├─ 04_data/
+├─ 05_lib/
+└─ 06_tools/
+
+Each directory role:
+
+| Directory | Role |
+|----------|------|
+| 01_docs | Documentation |
+| 02_hardware | Hardware information |
+| 03_arduino | Firmware source code |
+| 04_data | Measurement data |
+| 05_lib | External / custom libraries |
+| 06_tools | PC tools / scripts |

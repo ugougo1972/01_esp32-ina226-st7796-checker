@@ -191,3 +191,29 @@ The following information must be written in 04_PROGRESS_LOG.md:
 
 04_PROGRESS_LOG.md is not a simple log.
 It is the knowledge base of this project.
+
+## Git Operation Rule
+
+### Commit Message Format
+type: 内容
+
+Types:
+- init : 初期作成
+- docs : ドキュメント
+- code : コード
+- hw   : ハード
+- calc : 計算
+- test : テスト
+- fix  : 修正
+- refactor : コード整理
+- arch : 設計変更
+
+### Commit Timing
+Commit should be made when:
+- After documentation update
+- After hardware decision
+- After code implementation
+- After test completion
+- After bug fix
+
+Small commits are preferred over large commits.
