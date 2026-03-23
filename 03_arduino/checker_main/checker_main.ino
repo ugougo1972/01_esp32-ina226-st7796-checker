@@ -1,7 +1,9 @@
 void setup() {
   Serial.begin(115200);
-  Serial.println("ESP32 start");
+  delay(1000);
+  Serial.println("checker_main start");
 }
 
 void loop() {
+
 }
