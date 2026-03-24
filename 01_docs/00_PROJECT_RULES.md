@@ -1,4 +1,4 @@
-# 00_PROJECT_RULES
+# 00_プロジェクトルール (00_Project Rules)
 
 ## 目的
 本ファイルは、本プロジェクトの進め方、記録方針、説明方針を定義するためのルールファイルである。
@@ -217,3 +217,134 @@ Commit should be made when:
 - After bug fix
 
 Small commits are preferred over large commits.
+
+---
+
+## Naming and Language Policy (命名と言語の方針)
+
+This project uses both English and Japanese.
+To avoid confusion and technical issues, naming and language usage rules are defined as follows.
+
+### 1. File and Folder Naming Rules
+
+| Item | Language |
+|------|----------|
+| Folder names | English (recommended) |
+| .md file names | English |
+| Source code file names (.ino, .cpp, .h) | English |
+| Function names | English |
+| Variable names | English |
+| Library names | English |
+
+Reason:
+- Avoid encoding issues
+- Avoid include path problems
+- Maintain compatibility with GitHub and Arduino IDE
+- Keep the project structure readable for technical users
+
+### 2. Where Japanese Can Be Used
+
+| Item | Japanese Allowed |
+|------|------------------|
+| Commit summary | Yes |
+| .md document body | Yes |
+| .md titles | Yes |
+| Comments in code | Yes |
+| Serial output messages | Yes |
+| Work logs | Yes |
+
+Rule:
+> Use English for system/technical identifiers.
+> Use Japanese for explanations and documentation.
+
+### 3. Commit Message Rules
+
+Commit summaries should describe **what was changed**.
+
+Examples:
+
+- INA226実装方針を追加
+- ピン定義を整理
+- I2Cスキャナコード追加
+- README更新
+- 配線図を追加
+- INA226計算式メモ追記
+
+Commit message format:
+type: short summary
+
+example:
+docs: INA226実装方針を追加
+code: INA226初期化処理を追加
+fix: I2Cアドレス設定ミス修正
+
+
+### 4. Folder Structure Policy
+
+The project structure should follow functional separation:
+
+| Folder | Purpose |
+|--------|--------|
+| 01_docs | Design documents |
+| 02_hardware | Wiring, schematics, photos |
+| 03_arduino | Source code |
+| 04_log | Work logs |
+| 05_lib | Custom libraries |
+
+Rule:
+- Do not mix documentation and source code
+- Do not place test code in root folder
+- Keep one purpose per folder
+
+### 5. Source Code Structure Policy
+
+Arduino project structure:
+checker_main/
+checker_main.ino ← main control only
+pins.h ← pin definitions
+ina226.cpp ← INA226 control
+ina226.h
+display.cpp ← TFT control (future)
+display.h
+logger.cpp ← SD logging (future)
+logger.h
+
+
+Rule:
+- `.ino` should contain only setup() and loop()
+- Hardware control should be written in `.cpp`
+- Use `.h` for declarations
+- One module = one pair of .cpp and .h
+
+### 6. Development Process Rules
+
+Development should proceed in small steps:
+
+1. Confirm wiring
+2. Confirm communication (I2C scan)
+3. Confirm sensor initialization
+4. Confirm raw data reading
+5. Confirm calculated values
+6. Confirm display
+7. Confirm logging
+8. Confirm integration
+
+Rule:
+> Do not implement multiple large features at once.
+> Always verify one step before moving to the next.
+
+### 7. Logging Rules
+
+`04_PROGRESS_LOG.md` is not just a diary.
+It is a technical record.
+
+Each log entry should include:
+
+- What was done
+- What worked
+- What did not work
+- What is not yet understood
+- What will be done next
+- Problems and hypotheses
+
+---

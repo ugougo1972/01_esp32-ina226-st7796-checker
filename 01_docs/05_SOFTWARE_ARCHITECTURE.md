@@ -1,5 +1,4 @@
-# 05_SOFTWARE_ARCHITECTURE.md
-# Software Architecture
+# 05_ソフトウェア構成 (05_Software Architecture)
 
 ## 1. Main Functions
 
@@ -56,7 +55,6 @@ if (60 seconds passed)
 }
 }
 
-
 ---
 
 ## 4. Data Structure
@@ -80,7 +78,6 @@ if (60 seconds passed)
 Date,Time,Voltage[V],Current[A],Power[W],Energy[Wh],Charge[Ah]
 Example:
 2026-04-01,12:00:00,19.85,1.42,28.2,0.015,0.0008
-
 
 ---
 
@@ -118,3 +115,42 @@ The firmware is divided into the following modules:
 The .ino file should contain only setup() and loop().
 
 All processing should be implemented in .cpp files.
+
+---
+
+## 8. INA226 Initial Implementation Policy
+
+The first INA226 implementation will be managed in the existing `03_arduino/checker_main` sketch folder.
+
+### File placement
+- `checker_main.ino`
+  - `setup()`
+  - `loop()`
+- `pins.h`
+  - I2C pin definitions
+  - INA226 I2C address definition
+- `ina226.h`
+  - INA226 function declarations
+- `ina226.cpp`
+  - INA226 initialization
+  - INA226 read functions
+  - Serial print helper for measurement values
+
+### Initial scope
+The first implementation scope is limited to:
+- I2C initialization
+- INA226 detection
+- INA226 initialization
+- Reading Bus Voltage
+- Reading Shunt Voltage
+- Reading Current
+- Reading Power
+- Output to Serial monitor
+
+TFT display, SD logging, RTC linkage, graph buffer, and UI control are excluded from this first implementation step.
+
+### Policy
+The purpose of the first INA226 implementation is to confirm communication and measurement flow only.
+
+The `.ino` file should remain minimal.
+INA226-related processing should be separated into `ina226.cpp` and `ina226.h`.

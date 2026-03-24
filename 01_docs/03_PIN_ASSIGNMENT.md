@@ -1,5 +1,4 @@
-# 03_PIN_ASSIGNMENT.md
-# ESP32 Pin Assignment
+# 03_ピン配置 (03_Pin Assignment)
 
 ## 1. I2C Bus
 

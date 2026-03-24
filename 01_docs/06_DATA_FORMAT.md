@@ -1,5 +1,4 @@
-# 06_DATA_FORMAT.md
-# Data Format (INA226)
+# 06_データ形式 (06_Data Format)
 
 ## INA226 Register Map
 | Register | Address | Description |

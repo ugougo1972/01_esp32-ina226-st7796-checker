@@ -1,5 +1,4 @@
-# 08_TEST_PLAN.md
-# Test Plan
+# 08_テスト計画 (08_Test Plan)
 
 ## Purpose
 Define test procedures for each module.

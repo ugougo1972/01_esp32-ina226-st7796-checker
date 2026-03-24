@@ -1,6 +1,6 @@
-# 07_CALCULATION.md
-# Calculation (INA226)
+# 07_計算式・変換式 (07_Calculation)
 
+## Calculation (INA226)
 ## Shunt Voltage
 Vshunt = Register * LSB
 

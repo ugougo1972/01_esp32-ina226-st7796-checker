@@ -1,5 +1,4 @@
-# 02_SYSTEM_ARCHITECTURE.md
-# System Architecture
+# 02_システム構成 (02_System Architecture)
 
 ## 1. Overview
 
