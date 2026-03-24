@@ -1,8 +1,9 @@
-#include "ina226.h"
-#include "pins.h"
-
+#include <Arduino.h>
 #include <Wire.h>
 #include <INA226_WE.h>
+
+#include "ina226.h"
+#include "pins.h"
 
 static INA226_WE ina226 = INA226_WE(INA226_I2C_ADDR);
 
@@ -12,9 +13,6 @@ bool initIna226() {
   if (!ina226.init()) {
     return false;
   }
-
-  // 必要に応じて後で calibration 設定を明示化する
-  // まずは通信成立と基本値取得を優先する
 
   return true;
 }
