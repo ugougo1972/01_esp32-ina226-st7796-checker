@@ -15,7 +15,16 @@ Maximum measurement specification:
 ## 2. System Block Diagram
 
 ### Power Line
-USB-C IN → Protection → INA226 → USB-C OUT
+
+電源 + → INA226 → 負荷 → GND
+
+[ USB-C PD ]
+       │
+       ▼
+[ INA226 ]──I2C──[ ESP32 ]──SPI──[ TFT ]
+       │
+       ▼
+     負荷
 
 This line carries actual load current (up to 5A).
 
