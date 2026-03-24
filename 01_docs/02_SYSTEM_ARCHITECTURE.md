@@ -58,6 +58,21 @@ GND
 
 ---
 
+## Ground System
+
+All modules share common ground.
+
+- USB Power GND
+- INA226 GND
+- ESP32 GND
+- Display GND
+- microSD GND
+- RTC GND
+
+All grounds must be connected together.
+
+---
+
 ## 3. Interface Summary
 
 | Device | Interface | Purpose |
