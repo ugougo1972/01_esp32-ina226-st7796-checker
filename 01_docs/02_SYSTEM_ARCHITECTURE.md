@@ -1,233 +1,192 @@
-# 02_SYSTEM_ARCHITECTURE
-システム構成 / System Architecture
-
----
+# 02_システム構成 (System Architecture)
 
 ## 1. Overview
-本システムは、USB電源ラインの電圧・電流・電力を測定し、
-ESP32でデータ処理・表示・記録を行う電力測定装置である。
+This project is an ESP32-based USB Power Logger that measures voltage, current, and power, displays the values on a TFT screen, logs data to microSD, and outputs logs to a PC.
 
-最大仕様（設計目標）:
-- 最大電圧: 20V
-- 最大電流: 5A
-- 最大電力: 100W
-
-主な機能:
-- 電圧測定
-- 電流測定
-- 電力測定
-- 積算電力量測定
-- TFT表示
-- microSDログ保存
-- PCシリアル出力
-- ロータリーエンコーダによるUI操作
+### Maximum Measurement Specification
+- Voltage: 20V
+- Current: 5A
+- Power: 100W
 
 ---
 
 ## 2. System Block Diagram
 
-### 電力ライン
-[ USB-C PD Power ]
-│
-▼
-[ Protection ]
-│
-▼
-[ INA226 ]
-│
-▼
-[ Load ]
-│
-▼
-GND
-
-※ INA226 は VBUS ラインの電流のみ測定する
-
----
-
-
-見やすさを少し優先した別案もあります。
-
-```md
-### 制御・表示・記録ライン
-
+### Power Line（電源ライン）
 ```text
-                     I2C                 SPI
-[ INA226 ] ───┐
-              ├──── [ ESP32 ] ─────── [ TFT Display ]
-[ DS3231 ] ───┘           │
-                          ├────────── [ microSD ]
-                          ├────────── [ PC Serial ]
-                          └────────── [ Rotary Encoder ]
+USB-C PD Source
+      │
+      ▼
+   [ INA226 ] ───→ Load
+      │
+     GND
+```
+
+This line carries actual load current (up to 5A).
 
 ---
 
-## Ground System
+### Control & Logging Line
+ESP32 is the central controller.
 
-All modules share common ground.
-
-- USB Power GND
-- INA226 GND
-- ESP32 GND
-- Display GND
-- microSD GND
-- RTC GND
-
-All grounds must be connected together.
+| Device         | Interface | Purpose                           |
+|----------------|-----------|-----------------------------------|
+| INA226         | I2C       | Voltage/Current/Power measurement |
+| DS3231         | I2C       | RTC (Real Time Clock)             |
+| ST7796 TFT     | SPI       | Display                           |
+| microSD        | SPI       | Data logging                      |
+| Rotary Encoder | GPIO      | User input                        |
+| PC             | USB Serial| Data logging / Debug              |
 
 ---
 
 ## 3. Interface Summary
 
-| Device | Interface | Purpose |
-|--------|-----------|---------|
-| INA226 | I2C | Voltage / Current / Power measurement |
-| DS3231 | I2C | Real Time Clock |
-| TFT Display | SPI | Display |
-| microSD | SPI | Data logging |
-| Rotary Encoder | GPIO | User input |
-| PC | USB Serial | Debug / Log output |
+### I2C Bus
+Shared by:
+- INA226
+- DS3231
+
+Signal lines:
+- SDA
+- SCL
+
+---
+
+### SPI Bus
+Shared by:
+- TFT Display
+- microSD
+
+Shared signals:
+- SCK
+- MOSI
+- MISO (used by SD)
+
+Individual signals:
+- TFT_CS
+- TFT_DC
+- TFT_RST
+- SD_CS
+
+---
+
+### GPIO
+- Encoder A
+- Encoder B
+- Encoder Switch
+
+---
+
+### USB
+- PC Serial Communication
+- Log output
+- Debug
 
 ---
 
 ## 4. Data Flow
+```text
+INA226 → ESP32 →
+                 ├ TFT Display
+                 ├ microSD (CSV log)
+                 ├ PC Serial
+                 ├ Energy Calculation (Wh/Ah)
+                 └ Graph Buffer
 
-### Measurement Data Flow
-INA226 → ESP32 → TFT Display
-microSD
-PC Serial
-Energy Calculation
-Graph Buffer
+RTC → ESP32 → Timestamp → SD / PC Log
 
-### Time Data Flow
-DS3231 → ESP32 → Timestamp → Log file / Display
-
-### User Input Flow
 Rotary Encoder → ESP32 → UI Control
+```
 
 ---
 
-## 5. USB Pass-Through Structure
+## 5. Timing Concept
 
-本装置は USB 電源ラインの途中に挿入して測定を行う。
+| Task             | Interval |
+|------------------|----------|
+| INA226 Read      | 0.5 sec  |
+| Display Update   | 0.5 sec  |
+| SD Write         | 1 sec    |
+| PC Serial Output | 1 sec    |
+| Graph Average    | 60 sec   |
+| Graph Width      | 60 points (1 hour) |
+
+---
+
+## 6. System Role Summary
+
+| Module  | Role                  |
+|---------|-----------------------|
+| INA226  | Measurement           |
+| ESP32   | Control / Calculation |
+| TFT     | Display               |
+| microSD | Logging               |
+| DS3231  | Timekeeping           |
+| Encoder | User Interface        |
+| PC      | External Logging      |
+
+---
+
+## 7. USB Pass-Through Structure
+This device is installed between USB power supply and USB device.
+
+### Connection Structure
+```text
 USB Power Source → This Device → USB Device
+```
 
-### Internal Connection
-| Signal | Connection |
-|--------|-----------|
-| VBUS | Protection → INA226 → USB-C OUT VBUS |
-| GND | Direct |
-| D+ | Direct |
-| D- | Direct |
-| CC | Direct |
+### Internal Power Line (VBUS)
+```text
+USB-C IN VBUS → Protection Circuit → INA226 → USB-C OUT VBUS
+```
 
-※ 電流測定対象は VBUS のみ
+### GND Line
+```text
+USB-C IN GND → USB-C OUT GND (Direct connection)
+```
 
----
+### Data Line Connection
+- D+ → Direct connection
+- D- → Direct connection
+- CC → Direct connection
 
-## 6. Power Measurement Path
-
-INA226 はシャント抵抗によるハイサイド電流測定を行う。
-Power Source + ── V+ ──[ Shunt Resistor ]── V- ── Load ── GND
-
-INA226 が測定するもの:
-- Bus Voltage（V+ 対 GND）
-- Shunt Voltage（シャント抵抗両端電圧）
-- Current（Shunt Voltage / Rshunt）
-- Power（Voltage × Current）
+Only VBUS current is measured by INA226.
 
 ---
 
-## 7. Current Implementation Scope（現段階）
+## 8. Repository Structure
+```text
+01_esp32-ina226-st7796-checker/
+├─ README.md
+├─ 01_docs/
+├─ 02_hardware/
+├─ 03_arduino/
+│   └─ checker_main/
+│       ├─ checker_main.ino
+│       ├─ config.h
+│       ├─ pins.h
+│       ├─ ina226.cpp
+│       ├─ ina226.h
+│       ├─ display.cpp
+│       ├─ display.h
+│       ├─ logger.cpp
+│       ├─ logger.h
+│       └─ ui.cpp
+├─ 04_data/
+├─ 05_lib/
+└─ 06_tools/
+```
 
-現在実装対象:
+### Directory Roles
 
-| Function | Status |
-|---------|--------|
-| INA226 I2C communication | DONE |
-| Bus Voltage measurement | TEST |
-| Current measurement | TODO |
-| Power calculation | TODO |
-| TFT display | TODO |
-| microSD logging | TODO |
-| RTC timestamp | TODO |
-| UI control | TODO |
-
----
-
-## 8. Planned Full Repository Structure（最終構成予定）
-01_docs/
-README.md
-00_PROJECT_RULES.md
-01_HARDWARE_PROFILE.md
-02_SYSTEM_ARCHITECTURE.md
-03_PIN_ASSIGNMENT.md
-04_PROGRESS_LOG.md
-05_SOFTWARE_ARCHITECTURE.md
-06_DATA_FORMAT.md
-07_CALCULATION.md
-08_TEST_PLAN.md
-
-02_hardware/
-schematic/
-wiring/
-photos/
-
-03_arduino/
-checker_main/
-checker_main.ino
-config.h
-pins.h
-ina226.cpp
-ina226.h
-display.cpp
-display.h
-logger.cpp
-logger.h
-ui.cpp
-ui.h
-
-04_data/
-log/
-calibration/
-
-05_lib/
-external/
-
-06_tools/
-scripts/
+| Directory   | Role                        |
+|-------------|-----------------------------|
+| 01_docs     | Documentation               |
+| 02_hardware | Hardware information        |
+| 03_arduino  | Firmware source code        |
+| 04_data     | Measurement data            |
+| 05_lib      | External / custom libraries |
+| 06_tools    | PC tools / scripts          |
 
 ---
-
-## 9. System Responsibility Separation
-
-| Module | Responsibility |
-|-------|----------------|
-| INA226 | Measurement |
-| ESP32 | Control / Calculation |
-| DS3231 | Time |
-| TFT | Display |
-| microSD | Storage |
-| Encoder | User Interface |
-
----
-
-## 10. Design Policy
-
-設計方針:
-- 測定系と制御系を分離する
-- 電力ラインとロジックラインを分離する
-- 計算ロジックはソフトウェア側で管理する
-- 段階的に機能を追加する
-- 各機能はモジュールとして分離する
-Measurement → Calculation → Display → Logging → UI
-
-段階開発:
-1. INA226通信
-2. 電圧測定
-3. 電流測定
-4. 電力測定
-5. 表示
-6. ログ
-7. UI
-8. 校正
