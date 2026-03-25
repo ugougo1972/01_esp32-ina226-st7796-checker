@@ -45,16 +45,20 @@ GND
 
 ---
 
+
+見やすさを少し優先した別案もあります。
+
+```md
 ### 制御・表示・記録ライン
-        I2C                SPI
+
+```text
+                     I2C                 SPI
 [ INA226 ] ───┐
-├── [ ESP32 ] ───── [ TFT Display ]
-[ DS3231 ] ───┘ │
-├──── [ microSD ]
-│
-├──── [ PC Serial ]
-│
-└──── [ Rotary Encoder ]
+              ├──── [ ESP32 ] ─────── [ TFT Display ]
+[ DS3231 ] ───┘           │
+                          ├────────── [ microSD ]
+                          ├────────── [ PC Serial ]
+                          └────────── [ Rotary Encoder ]
 
 ---
 
